@@ -25,6 +25,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".EnterNameActivity" />
+        <activity android:name=".QuestionActivity" />
     </application>
 
 </manifest>
