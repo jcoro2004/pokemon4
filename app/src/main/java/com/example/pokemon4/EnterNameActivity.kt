@@ -29,24 +29,25 @@ class EnterNameActivity : AppCompatActivity() {
         }
     }
 
-private fun submitUserName(name: String) {
-    val apiService = RetrofitClient.instance
-    val call = apiService.submitName(name)
-    call.enqueue(object : Callback<Void> {
-        override fun onResponse(call: Call<Void>, response: Response<Void>) {
-            if (response.isSuccessful) {
-                Toast.makeText(this@EnterNameActivity, "Name submitted successfully", Toast.LENGTH_SHORT).show()
-                val intent = Intent(this@EnterNameActivity, QuestionActivity::class.java)
-                startActivity(intent)
-                finish()
-            } else {
-                Toast.makeText(this@EnterNameActivity, "Failed to submit name", Toast.LENGTH_SHORT).show()
+    private fun submitUserName(name: String) {
+        val apiService = RetrofitClient.instance
+        val call = apiService.submitName(name)
+        call.enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                if (response.isSuccessful) {
+                    Toast.makeText(this@EnterNameActivity, "Name submitted successfully", Toast.LENGTH_SHORT).show()
+                    val intent = Intent(this@EnterNameActivity, QuestionActivity::class.java)
+                    intent.putExtra("USER_NAME", name)
+                    startActivity(intent)
+                    finish()
+                } else {
+                    Toast.makeText(this@EnterNameActivity, "Failed to submit name", Toast.LENGTH_SHORT).show()
+                }
             }
-        }
 
-        override fun onFailure(call: Call<Void>, t: Throwable) {
-            Toast.makeText(this@EnterNameActivity, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
-        }
-    })
-}
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                Toast.makeText(this@EnterNameActivity, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
 }

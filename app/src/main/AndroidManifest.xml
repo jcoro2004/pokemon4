@@ -26,6 +26,7 @@
         </activity>
         <activity android:name=".EnterNameActivity" />
         <activity android:name=".QuestionActivity" />
+        <activity android:name=".ScoreActivity" />
     </application>
 
 </manifest>

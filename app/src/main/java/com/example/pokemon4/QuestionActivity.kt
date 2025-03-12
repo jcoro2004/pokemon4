@@ -1,5 +1,6 @@
 package com.example.pokemon4
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
@@ -10,7 +11,6 @@ import androidx.recyclerview.widget.RecyclerView
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import kotlin.random.Random
 
 class QuestionActivity : AppCompatActivity() {
 
@@ -21,6 +21,8 @@ class QuestionActivity : AppCompatActivity() {
     private var respostes: List<Resposta> = listOf()
     private var currentIndex = 0
     private var selectedAnswer: Resposta? = null
+    private var score = 0
+    private var userName: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,8 +33,13 @@ class QuestionActivity : AppCompatActivity() {
         recyclerViewAnswers = findViewById(R.id.recyclerViewAnswers)
         recyclerViewAnswers.layoutManager = LinearLayoutManager(this)
 
+        userName = intent.getStringExtra("USER_NAME")
+
         btnNext.setOnClickListener {
             if (selectedAnswer != null) {
+                if (selectedAnswer!!.es_correcta == "1") {
+                    score++
+                }
                 showNextQuestion()
             } else {
                 Toast.makeText(this, "Please select an answer", Toast.LENGTH_SHORT).show()
@@ -75,7 +82,11 @@ class QuestionActivity : AppCompatActivity() {
             }
             currentIndex++
         } else {
-            Toast.makeText(this, "No more questions", Toast.LENGTH_SHORT).show()
+            val intent = Intent(this, ScoreActivity::class.java)
+            intent.putExtra("SCORE", score)
+            intent.putExtra("USER_NAME", userName)
+            startActivity(intent)
+            finish()
         }
     }
 }
