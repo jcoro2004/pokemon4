@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import kotlin.random.Random
 
 class QuestionActivity : AppCompatActivity() {
 
@@ -49,7 +50,7 @@ class QuestionActivity : AppCompatActivity() {
                 if (response.isSuccessful) {
                     val apiResponse = response.body()
                     if (apiResponse != null) {
-                        preguntes = apiResponse.preguntes
+                        preguntes = apiResponse.preguntes.shuffled().take(5)
                         respostes = apiResponse.respostes
                         showNextQuestion()
                     }
