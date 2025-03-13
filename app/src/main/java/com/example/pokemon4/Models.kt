@@ -13,9 +13,9 @@ data class Resposta(
 )
 
 data class Usuari(
-    val id_usuari: String,
+    val id_usuari: Int,
     val nom_usuari: String,
-    val puntuacio: String
+    val puntuacio: Int
 )
 
 data class ApiResponse(

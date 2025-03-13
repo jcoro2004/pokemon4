@@ -23,6 +23,7 @@ class QuestionActivity : AppCompatActivity() {
     private var selectedAnswer: Resposta? = null
     private var score = 0
     private var userName: String? = null
+    private var numberOfQuestions = 5
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,6 +35,7 @@ class QuestionActivity : AppCompatActivity() {
         recyclerViewAnswers.layoutManager = LinearLayoutManager(this)
 
         userName = intent.getStringExtra("USER_NAME")
+        numberOfQuestions = intent.getIntExtra("NUMBER_OF_QUESTIONS", 5)
 
         btnNext.setOnClickListener {
             if (selectedAnswer != null) {
@@ -57,7 +59,7 @@ class QuestionActivity : AppCompatActivity() {
                 if (response.isSuccessful) {
                     val apiResponse = response.body()
                     if (apiResponse != null) {
-                        preguntes = apiResponse.preguntes.shuffled().take(5)
+                        preguntes = apiResponse.preguntes.shuffled().take(numberOfQuestions)
                         respostes = apiResponse.respostes
                         showNextQuestion()
                     }
@@ -79,6 +81,9 @@ class QuestionActivity : AppCompatActivity() {
             val filteredRespostes = respostes.filter { it.id_pregunta == pregunta.id_pregunta }
             recyclerViewAnswers.adapter = AnswerAdapter(filteredRespostes) { resposta ->
                 selectedAnswer = resposta
+                if (resposta.es_correcta == "1") {
+                    updateScoreInDatabase()
+                }
             }
             currentIndex++
         } else {
@@ -88,5 +93,23 @@ class QuestionActivity : AppCompatActivity() {
             startActivity(intent)
             finish()
         }
+    }
+
+    private fun updateScoreInDatabase() {
+        val apiService = RetrofitClient.instance
+        val call = apiService.incrementScore(userName!!)
+        call.enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                if (response.isSuccessful) {
+                    Toast.makeText(this@QuestionActivity, "Score updated successfully", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(this@QuestionActivity, "Failed to update score", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                Toast.makeText(this@QuestionActivity, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
     }
 }

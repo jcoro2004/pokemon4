@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -11,6 +13,7 @@ import retrofit2.Response
 class ScoreActivity : AppCompatActivity() {
 
     private lateinit var textScore: TextView
+    private lateinit var recyclerViewUsers: RecyclerView
     private var score = 0
     private var userName: String? = null
 
@@ -19,6 +22,9 @@ class ScoreActivity : AppCompatActivity() {
         setContentView(R.layout.activity_score)
 
         textScore = findViewById(R.id.textScore)
+        recyclerViewUsers = findViewById(R.id.recyclerViewUsers)
+        recyclerViewUsers.layoutManager = LinearLayoutManager(this)
+
         score = intent.getIntExtra("SCORE", 0)
         userName = intent.getStringExtra("USER_NAME")
 
@@ -31,6 +37,7 @@ class ScoreActivity : AppCompatActivity() {
         textScore.text = "Your score: $score"
 
         updateScoreInDatabase()
+        fetchUsers()
     }
 
     private fun updateScoreInDatabase() {
@@ -46,6 +53,29 @@ class ScoreActivity : AppCompatActivity() {
             }
 
             override fun onFailure(call: Call<Void>, t: Throwable) {
+                Toast.makeText(this@ScoreActivity, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
+    private fun fetchUsers() {
+        val apiService = RetrofitClient.instance
+        val call = apiService.getUsers()
+        call.enqueue(object : Callback<List<Usuari>> {
+            override fun onResponse(call: Call<List<Usuari>>, response: Response<List<Usuari>>) {
+                if (response.isSuccessful) {
+                    val users = response.body()
+                    if (users != null) {
+                        recyclerViewUsers.adapter = UserAdapter(users) { user ->
+                            // Handle user item click if needed
+                        }
+                    }
+                } else {
+                    Toast.makeText(this@ScoreActivity, "Failed to load users", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<List<Usuari>>, t: Throwable) {
                 Toast.makeText(this@ScoreActivity, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
             }
         })

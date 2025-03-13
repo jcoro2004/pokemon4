@@ -11,13 +11,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val btnInfo: Button = findViewById(R.id.btnInfo)
         val btnStartGame: Button = findViewById(R.id.btnStartGame)
         val btnPreferences: Button = findViewById(R.id.btnPreferences)
-
-        btnInfo.setOnClickListener {
-            // Afegeix el codi per mostrar informació sobre l'aplicació
-        }
 
         btnStartGame.setOnClickListener {
             val intent = Intent(this, EnterNameActivity::class.java)
@@ -25,7 +20,8 @@ class MainActivity : AppCompatActivity() {
         }
 
         btnPreferences.setOnClickListener {
-            // Afegeix el codi per obrir les preferències
+            val intent = Intent(this, PreferencesActivity::class.java)
+            startActivity(intent)
         }
     }
 }
