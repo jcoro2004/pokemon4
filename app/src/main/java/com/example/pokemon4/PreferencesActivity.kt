@@ -1,7 +1,9 @@
 package com.example.pokemon4
 
+import android.content.Context
 import android.os.Bundle
 import android.widget.Button
+import android.widget.NumberPicker
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -14,6 +16,8 @@ class PreferencesActivity : AppCompatActivity() {
 
     private lateinit var recyclerViewUsers: RecyclerView
     private lateinit var btnResetScore: Button
+    private lateinit var numberPicker: NumberPicker
+    private lateinit var btnSavePreferences: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,13 +26,32 @@ class PreferencesActivity : AppCompatActivity() {
         recyclerViewUsers = findViewById(R.id.recyclerViewUsers)
         recyclerViewUsers.layoutManager = LinearLayoutManager(this)
 
-        // Call fetchUsers during initialization to attach the adapter.
-        fetchUsers()
+        // Setup the NumberPicker between 5 and 10 questions.
+        numberPicker = findViewById(R.id.numberPicker)
+        numberPicker.minValue = 5
+        numberPicker.maxValue = 10
+
+        val sharedPref = getSharedPreferences("app_preferences", Context.MODE_PRIVATE)
+        val savedQuestions = sharedPref.getInt("NUMBER_OF_QUESTIONS", 5)
+        numberPicker.value = savedQuestions
 
         btnResetScore = findViewById(R.id.btnResetScore)
         btnResetScore.setOnClickListener {
-            fetchUsers()  // This call will refresh the adapter on reset.
+            fetchUsers() // Refresh the list when resetting score.
         }
+
+        btnSavePreferences = findViewById(R.id.btnSavePreferences)
+        btnSavePreferences.setOnClickListener {
+            val selectedQuestions = numberPicker.value
+            sharedPref.edit().putInt("NUMBER_OF_QUESTIONS", selectedQuestions).apply()
+            Toast.makeText(
+                this,
+                "Preferences saved: $selectedQuestions questions",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+
+        fetchUsers()
     }
 
     private fun fetchUsers() {
@@ -61,7 +84,7 @@ class PreferencesActivity : AppCompatActivity() {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
                 if (response.isSuccessful) {
                     Toast.makeText(this@PreferencesActivity, "Score reset successfully", Toast.LENGTH_SHORT).show()
-                    fetchUsers() // Refresh the list after reset.
+                    fetchUsers() // Refresh after score reset.
                 } else {
                     Toast.makeText(this@PreferencesActivity, "Failed to reset score", Toast.LENGTH_SHORT).show()
                 }

@@ -1,5 +1,6 @@
 package com.example.pokemon4
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
@@ -35,7 +36,15 @@ class QuestionActivity : AppCompatActivity() {
         recyclerViewAnswers.layoutManager = LinearLayoutManager(this)
 
         userName = intent.getStringExtra("USER_NAME")
-        numberOfQuestions = intent.getIntExtra("NUMBER_OF_QUESTIONS", 5)
+        if (userName == null) {
+            Toast.makeText(this, "User name is missing", Toast.LENGTH_SHORT).show()
+            finish()
+            return
+        }
+
+        // Retrieve the number of questions from SharedPreferences.
+        val sharedPref = getSharedPreferences("app_preferences", Context.MODE_PRIVATE)
+        numberOfQuestions = sharedPref.getInt("NUMBER_OF_QUESTIONS", 5)
 
         btnNext.setOnClickListener {
             if (selectedAnswer != null) {
@@ -59,6 +68,7 @@ class QuestionActivity : AppCompatActivity() {
                 if (response.isSuccessful) {
                     val apiResponse = response.body()
                     if (apiResponse != null) {
+                        // Shuffle and take the number of questions set in preferences.
                         preguntes = apiResponse.preguntes.shuffled().take(numberOfQuestions)
                         respostes = apiResponse.respostes
                         showNextQuestion()
