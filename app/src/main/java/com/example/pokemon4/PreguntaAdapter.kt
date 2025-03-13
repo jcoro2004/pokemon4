@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
+// Adaptador per a la llista de preguntes
 class PreguntaAdapter(private val preguntes: List<Pregunta>) :
     RecyclerView.Adapter<PreguntaAdapter.PreguntaViewHolder>() {
 

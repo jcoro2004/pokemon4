@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import androidx.recyclerview.widget.RecyclerView
 
+// Adaptador per a la llista de respostes
 class AnswerAdapter(
     private val respostes: List<Resposta>,
     private val onItemClick: (Resposta) -> Unit
@@ -15,11 +16,13 @@ class AnswerAdapter(
     private var selectedPosition = -1
     private var correctAnswerPosition = -1
 
+    // Crea un nou ViewHolder per a un element de la llista
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AnswerViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_resposta, parent, false)
         return AnswerViewHolder(view)
     }
 
+    // Lliga les dades d'una resposta a un ViewHolder
     override fun onBindViewHolder(holder: AnswerViewHolder, position: Int) {
         val resposta = respostes[position]
         holder.btnResposta.text = resposta.text_resposta
@@ -39,10 +42,12 @@ class AnswerAdapter(
         }
     }
 
+    // Retorna el nombre d'elements a la llista
     override fun getItemCount(): Int {
         return respostes.size
     }
 
+    // ViewHolder per a un element de la llista de respostes
     class AnswerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val btnResposta: Button = itemView.findViewById(R.id.btnResposta)
     }

@@ -10,6 +10,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import android.content.Intent
 
+// Activitat per introduir el nom de l'usuari
 class EnterNameActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,6 +30,7 @@ class EnterNameActivity : AppCompatActivity() {
         }
     }
 
+    // Envia el nom de l'usuari a l'API
     private fun submitUserName(name: String) {
         val apiService = RetrofitClient.instance
         val call = apiService.submitName(name)

@@ -13,6 +13,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
+// Activitat per mostrar les preguntes i respostes
 class QuestionActivity : AppCompatActivity() {
 
     private lateinit var textPregunta: TextView
@@ -42,7 +43,6 @@ class QuestionActivity : AppCompatActivity() {
             return
         }
 
-        // Retrieve the number of questions from SharedPreferences.
         val sharedPref = getSharedPreferences("app_preferences", Context.MODE_PRIVATE)
         numberOfQuestions = sharedPref.getInt("NUMBER_OF_QUESTIONS", 5)
 
@@ -60,6 +60,7 @@ class QuestionActivity : AppCompatActivity() {
         fetchQuestions()
     }
 
+    // Obté les preguntes de l'API
     private fun fetchQuestions() {
         val apiService = RetrofitClient.instance
         val call = apiService.getData()
@@ -68,7 +69,6 @@ class QuestionActivity : AppCompatActivity() {
                 if (response.isSuccessful) {
                     val apiResponse = response.body()
                     if (apiResponse != null) {
-                        // Shuffle and take the number of questions set in preferences.
                         preguntes = apiResponse.preguntes.shuffled().take(numberOfQuestions)
                         respostes = apiResponse.respostes
                         showNextQuestion()
@@ -84,6 +84,7 @@ class QuestionActivity : AppCompatActivity() {
         })
     }
 
+    // Mostra la següent pregunta
     private fun showNextQuestion() {
         if (currentIndex < preguntes.size) {
             val pregunta = preguntes[currentIndex]
@@ -105,6 +106,7 @@ class QuestionActivity : AppCompatActivity() {
         }
     }
 
+    // Actualitza la puntuació a la base de dades
     private fun updateScoreInDatabase() {
         val apiService = RetrofitClient.instance
         val call = apiService.incrementScore(userName!!)

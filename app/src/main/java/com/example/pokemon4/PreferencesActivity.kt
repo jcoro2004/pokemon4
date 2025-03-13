@@ -12,6 +12,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
+// Activitat per gestionar les preferències de l'usuari
 class PreferencesActivity : AppCompatActivity() {
 
     private lateinit var recyclerViewUsers: RecyclerView
@@ -19,6 +20,7 @@ class PreferencesActivity : AppCompatActivity() {
     private lateinit var numberPicker: NumberPicker
     private lateinit var btnSavePreferences: Button
 
+    // Inicialitza l'activitat i configura els elements de la vista
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_preferences)
@@ -26,7 +28,6 @@ class PreferencesActivity : AppCompatActivity() {
         recyclerViewUsers = findViewById(R.id.recyclerViewUsers)
         recyclerViewUsers.layoutManager = LinearLayoutManager(this)
 
-        // Setup the NumberPicker between 5 and 10 questions.
         numberPicker = findViewById(R.id.numberPicker)
         numberPicker.minValue = 5
         numberPicker.maxValue = 10
@@ -37,7 +38,7 @@ class PreferencesActivity : AppCompatActivity() {
 
         btnResetScore = findViewById(R.id.btnResetScore)
         btnResetScore.setOnClickListener {
-            fetchUsers() // Refresh the list when resetting score.
+            fetchUsers()
         }
 
         btnSavePreferences = findViewById(R.id.btnSavePreferences)
@@ -46,7 +47,7 @@ class PreferencesActivity : AppCompatActivity() {
             sharedPref.edit().putInt("NUMBER_OF_QUESTIONS", selectedQuestions).apply()
             Toast.makeText(
                 this,
-                "Preferences saved: $selectedQuestions questions",
+                "Preferències desades: $selectedQuestions preguntes",
                 Toast.LENGTH_SHORT
             ).show()
         }
@@ -54,6 +55,7 @@ class PreferencesActivity : AppCompatActivity() {
         fetchUsers()
     }
 
+    // Obté la llista d'usuaris del servidor
     private fun fetchUsers() {
         val apiService = RetrofitClient.instance
         val call = apiService.getUsers()
@@ -67,7 +69,7 @@ class PreferencesActivity : AppCompatActivity() {
                         }
                     }
                 } else {
-                    Toast.makeText(this@PreferencesActivity, "Failed to load users", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@PreferencesActivity, "No s'han pogut carregar els usuaris", Toast.LENGTH_SHORT).show()
                 }
             }
 
@@ -77,16 +79,17 @@ class PreferencesActivity : AppCompatActivity() {
         })
     }
 
+    // Reseteja la puntuació d'un usuari
     private fun resetUserScore(userId: Int) {
         val apiService = RetrofitClient.instance
         val call = apiService.resetScore(userId)
         call.enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
                 if (response.isSuccessful) {
-                    Toast.makeText(this@PreferencesActivity, "Score reset successfully", Toast.LENGTH_SHORT).show()
-                    fetchUsers() // Refresh after score reset.
+                    Toast.makeText(this@PreferencesActivity, "Puntuació resetejada correctament", Toast.LENGTH_SHORT).show()
+                    fetchUsers()
                 } else {
-                    Toast.makeText(this@PreferencesActivity, "Failed to reset score", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@PreferencesActivity, "No s'ha pogut resetar la puntuació", Toast.LENGTH_SHORT).show()
                 }
             }
 

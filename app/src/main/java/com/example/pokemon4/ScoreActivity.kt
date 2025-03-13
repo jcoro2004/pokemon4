@@ -10,6 +10,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
+// Activitat per mostrar la puntuació i la llista d'usuaris
 class ScoreActivity : AppCompatActivity() {
 
     private lateinit var textScore: TextView
@@ -40,6 +41,7 @@ class ScoreActivity : AppCompatActivity() {
         fetchUsers()
     }
 
+    // Actualitza la puntuació a la base de dades
     private fun updateScoreInDatabase() {
         val apiService = RetrofitClient.instance
         val call = apiService.updateScore(userName!!, score)
@@ -58,6 +60,7 @@ class ScoreActivity : AppCompatActivity() {
         })
     }
 
+    // Obté la llista d'usuaris de l'API
     private fun fetchUsers() {
         val apiService = RetrofitClient.instance
         val call = apiService.getUsers()
@@ -67,7 +70,7 @@ class ScoreActivity : AppCompatActivity() {
                     val users = response.body()
                     if (users != null) {
                         recyclerViewUsers.adapter = UserAdapter(users) { user ->
-                            // Handle user item click if needed
+                            // Gestió del clic a l'element de l'usuari si cal
                         }
                     }
                 } else {
