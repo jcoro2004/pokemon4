@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import android.media.MediaPlayer
 
 // Activitat per mostrar les preguntes i respostes
 class QuestionActivity : AppCompatActivity() {
@@ -60,6 +61,15 @@ class QuestionActivity : AppCompatActivity() {
         fetchQuestions()
     }
 
+    // Función para reproducir efecto sonoro
+    private fun playSoundEffect() {
+        val mediaPlayer = MediaPlayer.create(this, R.raw.correct_choice)
+        mediaPlayer.start()
+        mediaPlayer.setOnCompletionListener { mp ->
+            mp.release()
+        }
+    }
+
     // Obté les preguntes de l'API
     private fun fetchQuestions() {
         val apiService = RetrofitClient.instance
@@ -92,6 +102,7 @@ class QuestionActivity : AppCompatActivity() {
             val filteredRespostes = respostes.filter { it.id_pregunta == pregunta.id_pregunta }
             recyclerViewAnswers.adapter = AnswerAdapter(filteredRespostes) { resposta ->
                 selectedAnswer = resposta
+                playSoundEffect()
                 if (resposta.es_correcta == "1") {
                     updateScoreInDatabase()
                 }
