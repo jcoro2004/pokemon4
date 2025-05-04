@@ -1,9 +1,11 @@
+// app/src/main/java/com/example/pokemon4/PreferencesActivity.kt
 package com.example.pokemon4
 
 import android.content.Context
 import android.os.Bundle
 import android.widget.Button
 import android.widget.NumberPicker
+import android.widget.Switch
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -12,15 +14,14 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-// Activitat per gestionar les preferències de l'usuari
 class PreferencesActivity : AppCompatActivity() {
 
     private lateinit var recyclerViewUsers: RecyclerView
     private lateinit var btnResetScore: Button
     private lateinit var numberPicker: NumberPicker
     private lateinit var btnSavePreferences: Button
+    private lateinit var switchMusic: Switch
 
-    // Inicialitza l'activitat i configura els elements de la vista
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_preferences)
@@ -47,7 +48,21 @@ class PreferencesActivity : AppCompatActivity() {
             sharedPref.edit().putInt("NUMBER_OF_QUESTIONS", selectedQuestions).apply()
             Toast.makeText(
                 this,
-                "Preferències desades: $selectedQuestions preguntes",
+                "Preferencias guardadas: $selectedQuestions preguntas",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+
+        // Configuración del Switch para la música
+        switchMusic = findViewById(R.id.switchMusic)
+        val musicEnabled = sharedPref.getBoolean("MUSIC_ENABLED", true)
+        switchMusic.isChecked = musicEnabled
+
+        switchMusic.setOnCheckedChangeListener { _, isChecked ->
+            sharedPref.edit().putBoolean("MUSIC_ENABLED", isChecked).apply()
+            Toast.makeText(
+                this,
+                "Música de fondo " + if (isChecked) "activada" else "desactivada",
                 Toast.LENGTH_SHORT
             ).show()
         }
@@ -55,7 +70,6 @@ class PreferencesActivity : AppCompatActivity() {
         fetchUsers()
     }
 
-    // Obté la llista d'usuaris del servidor
     private fun fetchUsers() {
         val apiService = RetrofitClient.instance
         val call = apiService.getUsers()
@@ -69,7 +83,7 @@ class PreferencesActivity : AppCompatActivity() {
                         }
                     }
                 } else {
-                    Toast.makeText(this@PreferencesActivity, "No s'han pogut carregar els usuaris", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@PreferencesActivity, "No se pudieron cargar los usuarios", Toast.LENGTH_SHORT).show()
                 }
             }
 
@@ -79,17 +93,16 @@ class PreferencesActivity : AppCompatActivity() {
         })
     }
 
-    // Reseteja la puntuació d'un usuari
     private fun resetUserScore(userId: Int) {
         val apiService = RetrofitClient.instance
         val call = apiService.resetScore(userId)
         call.enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
                 if (response.isSuccessful) {
-                    Toast.makeText(this@PreferencesActivity, "Puntuació resetejada correctament", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@PreferencesActivity, "Puntuación reseteada correctamente", Toast.LENGTH_SHORT).show()
                     fetchUsers()
                 } else {
-                    Toast.makeText(this@PreferencesActivity, "No s'ha pogut resetar la puntuació", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@PreferencesActivity, "No se pudo resetear la puntuación", Toast.LENGTH_SHORT).show()
                 }
             }
 
