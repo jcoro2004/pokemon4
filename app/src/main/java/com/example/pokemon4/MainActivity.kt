@@ -1,55 +1,55 @@
-// app/src/main/java/com/example/pokemon4/MainActivity.kt
 package com.example.pokemon4
 
+import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.content.pm.PackageManager
 import android.media.MediaPlayer
 import android.os.Bundle
+import android.telephony.PhoneStateListener
+import android.telephony.TelephonyManager
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import android.app.AlertDialog
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 
 class MainActivity : AppCompatActivity() {
 
-    // MediaPlayer per reproduir la música de fons
     private var mediaPlayer: MediaPlayer? = null
-
-    // SharedPreferences que emmagatzema les preferències de l'aplicació
     private lateinit var sharedPref: SharedPreferences
+    private lateinit var telephonyManager: TelephonyManager
+    private lateinit var phoneStateListener: PhoneStateListener
+    private val REQUEST_READ_PHONE_STATE = 100
 
-    // Listener per detectar canvis en la preferència "MUSIC_ENABLED"
-    private val prefListener = SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
-        if (key == "MUSIC_ENABLED") {
-            // Comprovem si la música està activada o desactivada
-            val musicEnabled = sharedPreferences.getBoolean("MUSIC_ENABLED", true)
-            if (musicEnabled) {
-                // Si la música està activada, es crea o reprèn el MediaPlayer
-                if (mediaPlayer == null) {
-                    mediaPlayer = MediaPlayer.create(this, R.raw.background_music)
-                    mediaPlayer?.isLooping = true
-                }
-                if (!mediaPlayer!!.isPlaying) {
-                    mediaPlayer?.start()
-                }
-            } else {
-                // Si la música està desactivada, es pausa el MediaPlayer si s'estava reproduint
-                if (mediaPlayer?.isPlaying == true) {
-                    mediaPlayer?.pause()
+    private val prefListener =
+        SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
+            if (key == "MUSIC_ENABLED") {
+                val musicEnabled = sharedPreferences.getBoolean("MUSIC_ENABLED", true)
+                if (musicEnabled) {
+                    if (mediaPlayer == null) {
+                        mediaPlayer = MediaPlayer.create(this, R.raw.background_music)
+                        mediaPlayer?.isLooping = true
+                    }
+                    if (!mediaPlayer!!.isPlaying) {
+                        mediaPlayer?.start()
+                    }
+                } else {
+                    if (mediaPlayer?.isPlaying == true) {
+                        mediaPlayer?.pause()
+                    }
                 }
             }
         }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // Inicialitza les SharedPreferences i registra el listener per canvis
         sharedPref = getSharedPreferences("app_preferences", Context.MODE_PRIVATE)
         sharedPref.registerOnSharedPreferenceChangeListener(prefListener)
 
-        // Arrenca la música només si la preferència ho permet
         val musicEnabled = sharedPref.getBoolean("MUSIC_ENABLED", true)
         if (musicEnabled) {
             mediaPlayer = MediaPlayer.create(this, R.raw.background_music)
@@ -57,7 +57,40 @@ class MainActivity : AppCompatActivity() {
             mediaPlayer?.start()
         }
 
-        // Configura els botons per iniciar el joc, obrir preferències i mostrar informació
+        telephonyManager = getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
+        phoneStateListener = object : PhoneStateListener() {
+            override fun onCallStateChanged(state: Int, incomingNumber: String?) {
+                when (state) {
+                    TelephonyManager.CALL_STATE_RINGING,
+                    TelephonyManager.CALL_STATE_OFFHOOK -> {
+                        if (mediaPlayer?.isPlaying == true) {
+                            mediaPlayer?.pause()
+                        }
+                    }
+                    TelephonyManager.CALL_STATE_IDLE -> {
+                        if (sharedPref.getBoolean("MUSIC_ENABLED", true)) {
+                            if (mediaPlayer != null && !mediaPlayer!!.isPlaying) {
+                                mediaPlayer?.start()
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // Verifica y solicita el permiso READ_PHONE_STATE
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE)
+            != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.READ_PHONE_STATE),
+                REQUEST_READ_PHONE_STATE
+            )
+        } else {
+            telephonyManager.listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE)
+        }
+
+        // Configuración de botones
         val btnStartGame: Button = findViewById(R.id.btnStartGame)
         val btnPreferences: Button = findViewById(R.id.btnPreferences)
         val btnInfo: Button = findViewById(R.id.btnInfo)
@@ -77,7 +110,17 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // Mostra un dialeg que conté informació sobre l'aplicació
+    // Manejar la respuesta de la petición de permisos
+    override fun onRequestPermissionsResult(
+        requestCode: Int, permissions: Array<out String>, grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == REQUEST_READ_PHONE_STATE && grantResults.isNotEmpty()
+            && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            telephonyManager.listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE)
+        }
+    }
+
     private fun mostrarDialegInformacio() {
         val builder = AlertDialog.Builder(this)
         builder.setTitle("Informació")
@@ -88,9 +131,8 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        // Desregistra el listener per evitar fugides de memòria
         sharedPref.unregisterOnSharedPreferenceChangeListener(prefListener)
-        // Allibera el MediaPlayer
         mediaPlayer?.release()
+        telephonyManager.listen(phoneStateListener, PhoneStateListener.LISTEN_NONE)
     }
 }

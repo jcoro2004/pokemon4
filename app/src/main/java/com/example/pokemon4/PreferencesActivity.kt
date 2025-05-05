@@ -1,4 +1,3 @@
-// app/src/main/java/com/example/pokemon4/PreferencesActivity.kt
 package com.example.pokemon4
 
 import android.content.Context
