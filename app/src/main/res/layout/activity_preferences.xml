@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -7,67 +8,78 @@
         android:background="@drawable/pokedex2">
 
     <Switch
-        android:id="@+id/switchMusic"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Música de fondo"
-        app:layout_constraintTop_toBottomOf="@+id/btnSavePreferences"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp"/>
+            android:id="@+id/switchMusic"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Background Music"
+            app:layout_constraintTop_toBottomOf="@+id/btnSavePreferences"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="16dp"/>
+
+    <Switch
+            android:id="@+id/switchSoundEffect"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Answer Sound Effect"
+            app:layout_constraintTop_toBottomOf="@id/switchMusic"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="16dp"/>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerViewUsers"
-        android:layout_width="300dp"
-        android:layout_height="250dp"
-        android:layout_marginBottom="16dp"
-        android:layout_marginTop="168dp"
-        android:fontFamily="@font/pressstart2pregular"
-        android:textColor="@color/black"
-        android:background="@android:color/transparent"
-        app:layout_constraintBottom_toTopOf="@+id/numberPicker"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+            android:id="@+id/recyclerViewUsers"
+            android:layout_width="300dp"
+            android:layout_height="250dp"
+            android:layout_marginBottom="16dp"
+            android:layout_marginTop="168dp"
+            android:fontFamily="@font/pressstart2pregular"
+            android:textColor="@color/black"
+            android:background="@android:color/transparent"
+            app:layout_constraintBottom_toTopOf="@+id/numberPicker"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
     <NumberPicker
-        android:id="@+id/numberPicker"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:fontFamily="@font/pressstart2pregular"
-        android:textColor="@color/black"
-        android:background="@android:color/transparent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.041"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/recyclerViewUsers" />
+            android:id="@+id/numberPicker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:fontFamily="@font/pressstart2pregular"
+            android:textColor="@color/black"
+            android:background="@android:color/transparent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.041"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/recyclerViewUsers" />
 
     <Button
-        android:id="@+id/btnResetScore"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Reset Score"
-        android:fontFamily="@font/pressstart2pregular"
-        android:textColor="@color/black"
-        android:background="@android:color/transparent"
-        android:layout_marginTop="-130dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.61"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/numberPicker" />
+            android:id="@+id/btnResetScore"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Reset Score"
+            android:fontFamily="@font/pressstart2pregular"
+            android:textColor="@color/black"
+            android:background="@android:color/transparent"
+            android:layout_marginTop="-130dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.61"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/numberPicker" />
 
     <Button
-        android:id="@+id/btnSavePreferences"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
-        android:fontFamily="@font/pressstart2pregular"
-        android:text="Save Preferences"
-        android:textColor="@color/black"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.74"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnResetScore" />
+            android:id="@+id/btnSavePreferences"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:fontFamily="@font/pressstart2pregular"
+            android:text="Save Preferences"
+            android:textColor="@color/black"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.74"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/btnResetScore" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

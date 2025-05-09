@@ -20,6 +20,7 @@ class PreferencesActivity : AppCompatActivity() {
     private lateinit var numberPicker: NumberPicker
     private lateinit var btnSavePreferences: Button
     private lateinit var switchMusic: Switch
+    private lateinit var switchSoundEffect: Switch
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,16 +53,28 @@ class PreferencesActivity : AppCompatActivity() {
             ).show()
         }
 
-        // Configuración del Switch para la música
+        // Music switch configuration
         switchMusic = findViewById(R.id.switchMusic)
         val musicEnabled = sharedPref.getBoolean("MUSIC_ENABLED", true)
         switchMusic.isChecked = musicEnabled
-
         switchMusic.setOnCheckedChangeListener { _, isChecked ->
             sharedPref.edit().putBoolean("MUSIC_ENABLED", isChecked).apply()
             Toast.makeText(
                 this,
                 "Música de fondo " + if (isChecked) "activada" else "desactivada",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+
+        // Answer sound effect switch configuration
+        switchSoundEffect = findViewById(R.id.switchSoundEffect)
+        val soundEffectEnabled = sharedPref.getBoolean("SOUND_EFFECT_ENABLED", true)
+        switchSoundEffect.isChecked = soundEffectEnabled
+        switchSoundEffect.setOnCheckedChangeListener { _, isChecked ->
+            sharedPref.edit().putBoolean("SOUND_EFFECT_ENABLED", isChecked).apply()
+            Toast.makeText(
+                this,
+                "Efecto de sonido para respuestas " + if (isChecked) "activado" else "desactivado",
                 Toast.LENGTH_SHORT
             ).show()
         }

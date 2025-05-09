@@ -63,10 +63,11 @@ class QuestionActivity : AppCompatActivity() {
 
     // Función para reproducir efecto sonoro
     private fun playSoundEffect() {
-        val mediaPlayer = MediaPlayer.create(this, R.raw.correct_choice)
-        mediaPlayer.start()
-        mediaPlayer.setOnCompletionListener { mp ->
-            mp.release()
+        val sharedPref = getSharedPreferences("app_preferences", Context.MODE_PRIVATE)
+        if (sharedPref.getBoolean("SOUND_EFFECT_ENABLED", true)) {
+            val mediaPlayer = MediaPlayer.create(this, R.raw.correct_choice)
+            mediaPlayer.start()
+            mediaPlayer.setOnCompletionListener { it.release() }
         }
     }
 
