@@ -14,13 +14,19 @@ import androidx.appcompat.app.AppCompatActivity
 import android.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import android.gesture.Gesture
+import android.gesture.GestureLibraries
+import android.gesture.GestureLibrary
+import android.gesture.GestureOverlayView
+import android.widget.Toast
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), GestureOverlayView.OnGesturePerformedListener {
 
     private var mediaPlayer: MediaPlayer? = null
     private lateinit var sharedPref: SharedPreferences
     private lateinit var telephonyManager: TelephonyManager
     private lateinit var phoneStateListener: PhoneStateListener
+    private lateinit var gestureLibrary: GestureLibrary
     private val REQUEST_READ_PHONE_STATE = 100
 
     private val prefListener =
@@ -108,9 +114,40 @@ class MainActivity : AppCompatActivity() {
         btnInfo.setOnClickListener {
             mostrarDialegInformacio()
         }
+
+        // Configuración de gestos
+        gestureLibrary = GestureLibraries.fromRawResource(this, R.raw.gestures)
+        if (!gestureLibrary.load()) {
+            Toast.makeText(this, "Error carregant els gestos", Toast.LENGTH_SHORT).show()
+            finish()
+        }
+
+        val gestureOverlayView: GestureOverlayView = findViewById(R.id.gestureOverlay)
+        gestureOverlayView.addOnGesturePerformedListener(this)
     }
 
-    // Manejar la respuesta de la petición de permisos
+    override fun onGesturePerformed(overlay: GestureOverlayView?, gesture: Gesture?) {
+        val predictions = gestureLibrary.recognize(gesture)
+        if (predictions.isNotEmpty() && predictions[0].score > 1.0) {
+            when (predictions[0].name) {
+                "Start" -> {
+                    val intent = Intent(this, EnterNameActivity::class.java)
+                    startActivity(intent)
+                }
+                "Info" -> {
+                    mostrarDialegInformacio()
+                }
+                "Preferences" -> {
+                    val intent = Intent(this, PreferencesActivity::class.java)
+                    startActivity(intent)
+                }
+                else -> {
+                    Toast.makeText(this, "Gest no reconegut", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
     override fun onRequestPermissionsResult(
         requestCode: Int, permissions: Array<out String>, grantResults: IntArray
     ) {
